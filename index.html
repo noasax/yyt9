@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jungle</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h3>Welcome to Jungle</h3>
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="nick">nickname: </label>
+        <input type="text" class="form-control" id="nick">
+      </div>
+      <button type="submit" class="btn btn-primary">JOIN</button>
+    </form>
+    <div id="chatLogs"></div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  $(function(){
+    var socket = io();
+
+    socket.on("join", function(data) {
+      $("#chatLogs").append("<div><strong>" + data + "</strong> has joined</div>");
+    });
+
+    $("form").submit(function(e) {
+      e.preventDefault();
+      var $nick = $("#nick").val();
+      if($nick.length > 2){
+        swal("nick name is too long", "It should be under 2", "error");
+      }
+      socket.emit("join", { id: $nick });
+      
+      window.location.replace("/map");
+    });
+  });
+  </script>
+</body>
+</html>

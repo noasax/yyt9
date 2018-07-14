@@ -1,0 +1,12 @@
+#map {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    background: yellow;
+}
+#me {
+    width: 10px;
+    height: 50px;
+    position: absolute;
+    background: red;
+}
