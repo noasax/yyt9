@@ -21,11 +21,14 @@ app.get('/generate/id', function(req, res) {
   res.send(`${id}`);
 });
 
-difPos = 1
-difRad = 0.03
-width = 600
-height = 400
+difRad = 0.01
+width = 1200
+height = 700
 players = [];
+
+function calcDiff(rad) {
+  return 2*(rad+5)/(rad-3);
+}
 
 io.on('connection', function(socket) {
   socket.on('join', function() {
@@ -34,38 +37,47 @@ io.on('connection', function(socket) {
   socket.on('move', function(data) {
     for(var i = 0; i < players.length; i++){
       if(players[i].id === data.id) {
-        if(data.dir === 'up'){
+        const difPos = calcDiff(players[i].r);
+        if(data.dir === 'up' && players[i].y - difPos - players[i].r > 0){
           players[i].y = players[i].y - difPos;
+          players[i].r = players[i].r + difRad;
         }
-        if(data.dir === 'down'){
+        if(data.dir === 'down' && players[i].y + difPos + players[i].r < height){
           players[i].y = players[i].y + difPos;
+          players[i].r = players[i].r + difRad;
         }
-        if(data.dir === 'left'){
+        if(data.dir === 'left' && players[i].x - difPos - players[i].r > 0){
           players[i].x = players[i].x - difPos;
+          players[i].r = players[i].r + difRad;
         }
-        if(data.dir === 'right'){
+        if(data.dir === 'right' && players[i].x + difPos + players[i].r < width){
           players[i].x = players[i].x + difPos;
+          players[i].r = players[i].r + difRad;
         }
-        players[i].r = players[i].r + difRad;
       }
     }
   });
 
   socket.on('generateId', function() {
     player = {
+      height,
+      width,
       id: Math.floor(Math.random() * 10000),
-      x: Math.floor(Math.random() * 300),
-      y: Math.floor(Math.random() * 300),
-      r: Math.floor(Math.random() * 30)
+      x: Math.floor(Math.random() * 1000) + 100,
+      y: Math.floor(Math.random() * 500 + 100),
+      r: 5
     };
     players.push(player);
 
     socket.emit('join', player);
   });
+  socket.on('forceDisconnect', function() {
+    socket.disconnect();
+  })
 
   setInterval(function(){ 
     socket.broadcast.emit('players', players)
-  }, 100);
+  }, 10);
   
   setInterval(function(){ 
     for(var i = 0; i < players.length; i++){
@@ -74,12 +86,11 @@ io.on('connection', function(socket) {
           >= Math.pow(players[i].x - players[j].x, 2) + Math.pow(players[i].y - players[j].y, 2)){
             removeIdx = (players[i].r > players[j].r) ? j : i;
             socket.broadcast.emit('die', players[removeIdx].id);
-            
             players.splice(removeIdx, 1);
           }
       }
     }
     
-  }, 100);
+  }, 10);
 
 });

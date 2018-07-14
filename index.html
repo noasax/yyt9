@@ -31,12 +31,12 @@
     $("form").submit(function(e) {
       e.preventDefault();
       var $nick = $("#nick").val();
-      if($nick.length > 2){
+      if($nick.length > 3){
         swal("nick name is too long", "It should be under 2", "error");
-      }
-      socket.emit("join", { id: $nick });
-      
-      window.location.replace("/map");
+      } 
+      else {
+        window.location.replace("/map");
+      }  
     });
   });
   </script>
