@@ -30,6 +30,8 @@ function calcDiff(rad) {
   return 2*(rad+5)/(rad-3);
 }
 
+
+
 io.on('connection', function(socket) {
   socket.on('join', function() {
   });
@@ -71,14 +73,11 @@ io.on('connection', function(socket) {
 
     socket.emit('join', player);
   });
-  socket.on('forceDisconnect', function() {
-    socket.disconnect();
-  })
 
   setInterval(function(){ 
-    socket.broadcast.emit('players', players)
+    socket.emit('players', players)
   }, 10);
-  
+
   setInterval(function(){ 
     for(var i = 0; i < players.length; i++){
       for(var j = i+1; j < players.length; j++){
@@ -90,7 +89,5 @@ io.on('connection', function(socket) {
           }
       }
     }
-    
   }, 10);
-
 });

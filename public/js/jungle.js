@@ -70,7 +70,7 @@ Jungle.start = function() {
     Jungle.canvas.width = Jungle.width;
     Jungle.canvas.height = Jungle.height;
     Jungle.canvas.style.border = '1px solid #000';
-    
+
     Jungle.context = Jungle.canvas.getContext("2d");
 
     document.body.appendChild(Jungle.canvas);
@@ -163,6 +163,9 @@ Enemy.prototype.draw = function(context) {
         context.beginPath();
         context.arc(enemy.x, enemy.y, enemy.r, 0, 2 * Math.PI, false);
         context.fillStyle = 'black';
+        if(enemy.id === Jungle.player.id){
+            context.fillStyle = 'red';
+        }
         context.fill();
     });
 };
